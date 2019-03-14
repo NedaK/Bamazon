@@ -7,7 +7,16 @@ CREATE TABLE products(
     product_name VARCHAR(50) NOT NULL,
     department_name VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    stock_quantity INTEGER NOt NULL
+    stock_quantity INTEGER NOt NULL,
+    product_sales DECIMAL(10,2)
+
+);
+
+CREATE TABLE departments( 
+    department_id INTEGER AUTO-INCREMENT PRIMARY-KEY,
+    department_name VARCHAR(50) NOT NULL,
+    over_head_costs DECIMAL(10, 2) NOT NULL,
+    
 
 );
 

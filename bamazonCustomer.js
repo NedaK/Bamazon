@@ -15,30 +15,48 @@ var connection = mysql.createConnection({
     // Your password
     password: "You601Thi$$",
     database: "bamazon"
-  });
+});
 
   connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
+    showProducts();
     //connection.end();
   });
 
   function showProducts(){
-    connection.query("SELECT id, product_name, price from products", function(err, resp){
-        if(err){
-            console.error(err);
-        }
-        else{
-            console.table(resp);
-            inquirer.prompt({
+        connection.query("SELECT id, product_name, price from products", function(err, resp){
+            if(err){
+                console.error(err);
+            }
+            else{
+                console.table(resp);
+                purchase();
+            }
+        });
+
+    };
+
+function purchase(){
+            inquirer.prompt([
+            {
                 message: "What is the id of the item you would like to purchase?",
                 type: "input",
                 name: "product_id"
-            }).then(function(inquirerResp1){
+            },
+            {
+                message: "How many units of this product would you like to buy?",
+                type: "input",
+                name: "howMany"
+            }
+        ]).then(function(inquirerResp1){
+
                 console.log("Item id: " + inquirerResp1.product_id);
                 var test = inquirerResp1.product_id;
-                connection.query("SELECT id, product_name, price from products WHERE id =" + test, 
-                    
+                var number = Number(inquirerResp1.howMany);
+
+                connection.query("SELECT * FROM products WHERE id =" + test, 
+                //id, product_name, price
                     function(err, resp){
                         if(err){
                             console.error(err);
@@ -46,25 +64,9 @@ var connection = mysql.createConnection({
                         else{
                             console.log("Product you are purchasing: " + resp[0].product_name)
                             console.log("Product price: $" + resp[0].price);
-                        }
-                    });
+                            console.log("Number of items: " + number);
 
-                
-                inquirer.prompt({
-                    message: "How many units of this product would you like to buy?",
-                    type: "input",
-                    name: "howMany"
-                }).then(function(inquirerResp2){
-                    console.log("Number of items: " + inquirerResp2.howMany);
-                    console.log("test: "+ test);
-                    var number = Number(inquirerResp2.howMany);
-                    connection.query("SELECT * FROM products WHERE id =" + test,
-                    //stock_quantity, product_name
-                    function(err, resp){
-                        if(err){
-                            console.error(err);
-                        }
-                        else{
+
                             if(resp[0].stock_quantity > number){
 
                                 var price = number * Number(resp[0].price);
@@ -73,8 +75,11 @@ var connection = mysql.createConnection({
                                 console.log(resp[0].stock_quantity);
                                 console.log(resp[0].price);
 
+                                var current_sales = resp[0].product_sales;
                                 var quantity = resp[0].stock_quantity;
                                 var updated_quantity = quantity - number;
+
+                                var updated_sales = current_sales + price;
 
                                 console.log("Quantity: " + quantity);
                                 console.log("Updated amunt: "+ updated_quantity);
@@ -85,7 +90,8 @@ var connection = mysql.createConnection({
                                         "UPDATE products SET ? WHERE ?",
                                         [
                                           {
-                                            stock_quantity: updated_quantity
+                                            stock_quantity: updated_quantity,
+                                            product_sales: updated_sales
                                           },
                                           {
                                             id: test
@@ -95,33 +101,41 @@ var connection = mysql.createConnection({
                                           if (error) {
                                             console.error(error);
                                           
-                                          
-                                        }
+                                            }
                                         else{
                                             console.log("Inventory updated");
-                                        }
-                                    });
+                                            purchaseMore();
+                                            }
+                                        });
                             }
                             else{
-                                console.log("There was not enough inventory to complete your order.")
-                            }
-                            connection.end();
+                                console.log("There was not enough inventory to complete your order.");
+                                purchaseMore();
+                                }
+                            //connection.end();
                             //console.log(resp[0].product_name);
                         }
-                        
-                        // var total = resp[0].stock_quantity;
-                        // console.log("Number of products available: "+ total);
 
                     });
-                    //console.log("Number of products available: "+ number_prodects_avail);
-                    //connection.end();
-                })
+                });
+    };
 
-            })
+                
+function purchaseMore(){
+    inquirer.prompt([
+        {
+            message: "Would you like to purchase another item (y/n)?",
+            type: "confirm",
+            name: "again"
         }
-
-        //connection.end();
+    ]).then(function(answer){
+        if(answer.again){
+            showProducts();
+            
+        }
+        else{
+            connection.end();
+        }
     });
-  };
-  showProducts();
-  
+} ;      
+        
