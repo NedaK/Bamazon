@@ -54,23 +54,6 @@ var connection = mysql.createConnection({
     };
 
     
-// SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales
-// FROM departments
-// INNER JOIN products on departments.department_name = products.department_name;
-
-// SELECT department_name, SUM(IFNULL(product_sales,0)) AS dept_sales
-//        FROM products
-//        GROUP BY department_name
-//        ORDER BY department_name;
-
-    //    SELECT departments.department_id, products.department_name,  SUM(IFNULL(product_sales,0)) AS dept_sales
-    //    FROM products
-       
-    //    JOIN departments
-    //    ON products.department_name = departments.department_name
-    //    GROUP BY department_name, department_id
-    //    ORDER BY department_id, department_name
-    //    ;
 
     function viewProducts(){
         var query = 

@@ -7,8 +7,8 @@ CREATE TABLE products(
     product_name VARCHAR(50) NOT NULL,
     department_name VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    stock_quantity INTEGER NOt NULL,
-    product_sales DECIMAL(10,2)
+    stock_quantity INTEGER NOT NULL,
+    product_sales DECIMAL(10,2) 
 
 );
 
@@ -19,6 +19,21 @@ CREATE TABLE departments(
     
 
 );
+
+ INSERT INTO departments(department_name, over_head_costs)
+ VALUES("toys", 200);
+
+ INSERT INTO departments(department_name, over_head_costs)
+ VALUES("electronics", 300);
+
+ INSERT INTO departments(department_name, over_head_costs)
+ VALUES("sporting goods", 100);
+
+ INSERT INTO departments(department_name, over_head_costs)
+ VALUES("home goods", 150);
+
+ INSERT INTO departments(department_name, over_head_costs)
+ VALUES("clothing", 200);
 
 
 
